@@ -2,12 +2,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type Data = {
-  name: string
+  totalCountries: number;
+  totalCities: number;
 }
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ name: 'John Doe' })
+  res.status(200).json({
+    totalCountries: 199,
+    totalCities: 23845
+  })
 }
