@@ -1,5 +1,5 @@
 import { TableRow } from "./styled";
-import { DataTableColumn } from "../../../types";
+import { DataTableColumn } from "../../component-types";
 
 export interface DatatableRowsProps<RowType> {
   rows: Array<Array<JSX.Element>>;

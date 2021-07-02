@@ -1,13 +1,13 @@
 import Image from "next/image";
-import { AppLayout } from "./components";
-import globe from "./images/globe-drawing.png";
-import { HomeHeader, HomeBody } from "./styles";
+import { AppLayout } from "../lib";
+import globe from "../lib/images/globe-drawing.png";
+import { HomeHeader, HomeBody } from "../lib/styles";
 
 export default function Home() {
   return (
     <AppLayout>
       <HomeHeader>
-        <Image src={globe} width="65px" height="80px" />
+        <Image src={globe} width="65px" height="80px" alt="Globe" />
       </HomeHeader>
       <HomeBody>
         <div>

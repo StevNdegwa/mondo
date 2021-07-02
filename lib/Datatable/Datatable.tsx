@@ -113,3 +113,5 @@ export function Datatable<RowsType>({
     </Wrapper>
   );
 }
+
+Datatable.displayName = "Datatable";

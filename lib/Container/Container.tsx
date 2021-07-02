@@ -14,3 +14,5 @@ export const Container: FC<Partial<ContainerProps>> = memo(
     </Wrapper>
   )
 );
+
+Container.displayName = "Container";

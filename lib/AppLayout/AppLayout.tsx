@@ -25,3 +25,5 @@ export const AppLayout: FC<{}> = ({ children }) => {
     </AppLayoutWrapper>
   );
 };
+
+AppLayout.displayName = "AppLayout";

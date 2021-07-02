@@ -14,3 +14,5 @@ export const TableError: FC<TableErrorProps> = ({ errorMessage }) => {
     </Wrapper>
   );
 };
+
+TableError.displayName = "TableError";

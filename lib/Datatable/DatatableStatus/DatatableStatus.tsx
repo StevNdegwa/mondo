@@ -36,3 +36,5 @@ export const DatatableStatus: FC<DatatableStatusProps> = ({
     </Wrapper>
   );
 };
+
+DatatableStatus.displayName = "DatatableStatus";

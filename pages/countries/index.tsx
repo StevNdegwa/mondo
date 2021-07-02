@@ -1,9 +1,15 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, FC } from "react";
 import { useQuery } from "react-query";
-import { AppLayout, Datatable, getTableRows } from "../components";
-import { columns, RowType } from "./constants";
+import Head from "next/head";
+import {
+  AppLayout,
+  Datatable,
+  getTableRows,
+  countryColumns,
+  RowType,
+} from "../../lib";
 
-const Cities = () => {
+const Countries: FC<{}> = () => {
   const [api, setApi] = useState<string>("/v1/geo/countries?limit=10&offset=1");
 
   const { data, error } = useQuery(["geo/countries", api], () =>
@@ -13,7 +19,7 @@ const Cities = () => {
   );
 
   const rows = useMemo(
-    () => getTableRows<RowType>(data?.data || [], columns),
+    () => getTableRows<RowType>(data?.data || [], countryColumns),
     [data]
   );
 
@@ -42,16 +48,19 @@ const Cities = () => {
 
   return (
     <AppLayout>
+      <Head>
+        <title>Cities list</title>
+      </Head>
       <Datatable
-        columns={columns}
+        columns={countryColumns}
         error={error ? new Error((error as Error).message) : null}
         loading={!data}
         rows={rows}
         pagination={{
-          goToFirst: () => setApi(links.first),
-          goToLast: () => setApi(links.last),
-          goToNext: () => setApi(links.next),
-          goToPrevious: () => setApi(links.previous),
+          goToFirst: () => links.first && setApi(links.first),
+          goToLast: () => links.last && setApi(links.last),
+          goToNext: () => links.next && setApi(links.next),
+          goToPrevious: () => links.prev && setApi(links.prev),
           startRow: metaData.startRow,
           endRow: metaData.endRow,
           totalRows: metaData.totalRows,
@@ -61,4 +70,6 @@ const Cities = () => {
   );
 };
 
-export default Cities;
+Countries.displayName = "Countries";
+
+export default Countries;
