@@ -1,10 +1,13 @@
-import { useMemo, useState, FC } from "react";
+import { useMemo, useState, FC, useCallback, ReactNode, useRef } from "react";
 import { useQuery } from "react-query";
 import Head from "next/head";
-import { AppLayout, Datatable, getTableRows, cityColumns, RowType } from "../../lib";
+import { AppLayout, Datatable, CityDetails } from "../../lib/components";
+import { RowType, columns } from "../../lib/cities";
+import { useLazyQuery } from "../../lib/hooks/useLazyQuery";
 
 const Cities: FC<{}> = () => {
   const [api, setApi] = useState<string>("/v1/geo/cities?limit=10&offset=1");
+  const selectedCity = useRef<string>("");
 
   const { data, error } = useQuery(["geo/cities", api], () =>
     fetch(`http://geodb-free-service.wirefreethought.com${api}`, {
@@ -12,9 +15,11 @@ const Cities: FC<{}> = () => {
     }).then((response) => response.json())
   );
 
-  const rows = useMemo(
-    () => getTableRows<RowType>(data?.data || [], cityColumns),
-    [data]
+  const [loadCityDetails] = useLazyQuery(["/v1/geo/cities"], () =>
+    fetch(
+      `http://geodb-free-service.wirefreethought.com/v1/geo/cities/${selectedCity.current}`,
+      { method: "GET" }
+    ).then((response) => response.json())
   );
 
   const links = useMemo(() => {
@@ -40,16 +45,47 @@ const Cities: FC<{}> = () => {
       : {};
   }, [data]);
 
+  const getRowDetails = useCallback(async (data: RowType) => {
+    selectedCity.current = data.id as string;
+
+    return new Promise<ReactNode>(async (resolve, reject) => {
+      const { data, error, isFetching, ...args } = await loadCityDetails({
+        cancelRefetch: true,
+      });
+
+      //city: "Ajman";
+      //country: "United Arab Emirates";
+      //countryCode: "AE";
+      //id: 638;
+      //latitude: 25.399444444;
+      //longitude: 55.479722222;
+      //name: "Ajman";
+      //population: 238119;
+      //region: "Ajman Emirate";
+      //regionCode: "AJ";
+      //type: "CITY";
+      //wikiDataId: "Q530171";
+
+      if (error) {
+        reject(error);
+      }
+
+      if (data) {
+        resolve(<CityDetails data={data?.data} />);
+      }
+    });
+  }, [loadCityDetails]);
+
   return (
     <AppLayout>
       <Head>
         <title>Cities list</title>
       </Head>
-      <Datatable
-        columns={cityColumns}
+      <Datatable<RowType>
+        columns={columns}
         error={error ? new Error((error as Error).message) : null}
         loading={!data}
-        rows={rows}
+        data={data?.data}
         pagination={{
           goToFirst: () => links.first && setApi(links.first),
           goToLast: () => links.last && setApi(links.last),
@@ -59,6 +95,7 @@ const Cities: FC<{}> = () => {
           endRow: metaData.endRow,
           totalRows: metaData.totalRows,
         }}
+        getRowDetails={getRowDetails}
       />
     </AppLayout>
   );

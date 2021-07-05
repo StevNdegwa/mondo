@@ -4,6 +4,7 @@ export const TableRow = styled.tr`
   width: 100%;
   line-height: 48px;
   padding: 0 0.3rem;
+  cursor:pointer;
   &:nth-child(even) {
     background-color: hsla(0, 0%, 98%, 0.3);
   }

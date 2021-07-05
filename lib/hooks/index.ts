@@ -1,0 +1,1 @@
+export { useLazyQuery } from "./useLazyQuery";

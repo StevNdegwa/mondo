@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { FeedbackTypes } from "../FeedbackTypes";
+import { FeedbackTypes } from "../../FeedbackTypes";
 import { Container } from "../Container";
 
 export const Wrapper = styled(Container)`
