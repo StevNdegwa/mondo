@@ -1,5 +1,5 @@
 import { FC, memo } from "react";
-import { FeedbackTypes } from "../FeedbackTypes";
+import { FeedbackTypes } from "../../FeedbackTypes";
 import { Wrapper } from "./styles";
 
 export interface AlertProps {

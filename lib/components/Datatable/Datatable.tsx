@@ -1,14 +1,10 @@
-import { useState, useEffect } from "react";
-import {
-  FaAngleDoubleLeft,
-  FaAngleLeft,
-  FaAngleRight,
-  FaAngleDoubleRight,
-} from "react-icons/fa";
-import { DataTableColumn } from "../component-types";
-import { Wrapper, Table, Tablehead, TableFoot } from "./styles";
+import { useState, useEffect, useMemo, ReactNode, useRef } from "react";
+import { DataTableColumn, DatatableRowsType } from "../../component-types";
+import { Wrapper, Table } from "./styles";
+import useDatatable from "./useDatatable";
 import { DatatableStatus } from "./DatatableStatus";
 import { DatatableRows } from "./DatatableRows";
+import { TableFooter } from "./TableFooter";
 
 export type PaginationType = {
   goToFirst: () => void;
@@ -20,12 +16,13 @@ export type PaginationType = {
   endRow?: number;
 };
 
-export interface DatatableProps<RowsType> {
-  columns: Array<DataTableColumn<RowsType>>;
-  rows: Array<Array<JSX.Element>>;
+export interface DatatableProps<RowType> {
+  columns: Array<DataTableColumn<RowType>>;
+  data: RowType[];
   loading?: boolean;
   error: Error | null;
   pagination: PaginationType;
+  getRowDetails?: (row: RowType) => Promise<ReactNode>;
 }
 
 export enum DatatableStatuses {
@@ -36,19 +33,19 @@ export enum DatatableStatuses {
 
 export function Datatable<RowsType>({
   columns,
-  rows,
+  data,
   loading,
   error,
-  pagination: {
-    goToFirst,
-    goToLast,
-    goToNext,
-    goToPrevious,
-    startRow,
-    endRow,
-    totalRows,
-  },
+  pagination,
+  getRowDetails
 }: DatatableProps<RowsType>) {
+  const { getTableRows } = useDatatable(columns);
+
+  const rows = useMemo<DatatableRowsType<RowsType>>(
+    () => getTableRows(data || []) || [],
+    [data]
+  );
+
   const [status, setStatus] = useState<DatatableStatuses>(
     error
       ? DatatableStatuses.ERROR
@@ -69,16 +66,18 @@ export function Datatable<RowsType>({
     );
   }, [loading, error, rows]);
 
+  const tableRef = useRef<HTMLTableElement | null>(null);
+
   return (
     <Wrapper>
-      <Table>
-        <Tablehead>
+      <Table ref={tableRef}>
+        <thead>
           <tr>
             {columns.map((column: DataTableColumn<RowsType>) => {
               return <th key={column.title}>{column.title}</th>;
             })}
           </tr>
-        </Tablehead>
+        </thead>
         <tbody>
           {status !== DatatableStatuses.NORMAL ? (
             <DatatableStatus
@@ -87,29 +86,11 @@ export function Datatable<RowsType>({
               error={error}
             />
           ) : (
-            <DatatableRows rows={rows} columns={columns} />
+            <DatatableRows rows={rows} columns={columns} table={tableRef} getRowDetails={getRowDetails} />
           )}
         </tbody>
       </Table>
-      <TableFoot>
-        <div>
-          Showing rows from {startRow} to {endRow} of {totalRows} rows{" "}
-        </div>
-        <div>
-          <button onClick={goToFirst}>
-            <FaAngleDoubleLeft />
-          </button>
-          <button onClick={goToPrevious}>
-            <FaAngleLeft />
-          </button>
-          <button onClick={goToNext}>
-            <FaAngleRight />
-          </button>
-          <button onClick={goToLast}>
-            <FaAngleDoubleRight />
-          </button>
-        </div>
-      </TableFoot>
+      <TableFooter pagination={pagination} />
     </Wrapper>
   );
 }

@@ -1,27 +1,37 @@
-import { useMemo, useState, FC } from "react";
+import { useMemo, useState, FC, ReactNode, useCallback, useRef } from "react";
 import { useQuery } from "react-query";
 import Head from "next/head";
-import {
-  AppLayout,
-  Datatable,
-  getTableRows,
-  countryColumns,
-  RowType,
-} from "../../lib";
+import { AppLayout, Datatable } from "../../lib/components";
+import { columns, RowType } from "../../lib/countries";
+import { useLazyQuery } from "../../lib/hooks";
+
+import { data } from "./data";
 
 const Countries: FC<{}> = () => {
   const [api, setApi] = useState<string>("/v1/geo/countries?limit=10&offset=1");
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
 
-  const { data, error } = useQuery(["geo/countries", api], () =>
+  const sc = useRef<string>("");
+
+  /**const { data, error } = useQuery(["geo/countries", api], () =>
     fetch(`http://geodb-free-service.wirefreethought.com${api}`, {
       method: "GET",
     }).then((response) => response.json())
+  );**/
+
+  const [loadCountryDetails, { data: lcData, error: lcError, isFetching, ...args }] = useLazyQuery(
+    ["geo/countries/details"],
+    () => {
+      return fetch(
+        `http://geodb-free-service.wirefreethought.com/v1/geo/countries/${sc.current}`,
+        {
+          method: "GET",
+        }
+      ).then((response) => response.json());
+    }
   );
 
-  const rows = useMemo(
-    () => getTableRows<RowType>(data?.data || [], countryColumns),
-    [data]
-  );
+  const error = null;
 
   const links = useMemo(() => {
     const links: Record<string, string> = {};
@@ -46,16 +56,28 @@ const Countries: FC<{}> = () => {
       : {};
   }, [data]);
 
+  console.log(isFetching)
+  const getRowDetails = useCallback(async (data: RowType) => {
+    //const [loading, setLoading] = useState(true);
+    
+    sc.current = data.code as string;
+    const query = loadCountryDetails();
+
+    return (<>
+      { isFetching ? <div>Loading</div> : !!lcData ? <section>{lcData.data.name}</section> : <div>No data</div> }
+    </>)
+  }, [isFetching, lcData]);
+
   return (
     <AppLayout>
       <Head>
         <title>Cities list</title>
       </Head>
-      <Datatable
-        columns={countryColumns}
+      <Datatable<RowType>
+        columns={columns}
         error={error ? new Error((error as Error).message) : null}
         loading={!data}
-        rows={rows}
+        data={data?.data}
         pagination={{
           goToFirst: () => links.first && setApi(links.first),
           goToLast: () => links.last && setApi(links.last),
@@ -65,6 +87,7 @@ const Countries: FC<{}> = () => {
           endRow: metaData.endRow,
           totalRows: metaData.totalRows,
         }}
+        getRowDetails={getRowDetails}
       />
     </AppLayout>
   );

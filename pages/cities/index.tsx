@@ -1,7 +1,8 @@
 import { useMemo, useState, FC } from "react";
 import { useQuery } from "react-query";
 import Head from "next/head";
-import { AppLayout, Datatable, getTableRows, cityColumns, RowType } from "../../lib";
+import { AppLayout, Datatable } from "../../lib/components";
+import { RowType, columns } from "../../lib/cities";
 
 const Cities: FC<{}> = () => {
   const [api, setApi] = useState<string>("/v1/geo/cities?limit=10&offset=1");
@@ -10,11 +11,6 @@ const Cities: FC<{}> = () => {
     fetch(`http://geodb-free-service.wirefreethought.com${api}`, {
       method: "GET",
     }).then((response) => response.json())
-  );
-
-  const rows = useMemo(
-    () => getTableRows<RowType>(data?.data || [], cityColumns),
-    [data]
   );
 
   const links = useMemo(() => {
@@ -45,11 +41,11 @@ const Cities: FC<{}> = () => {
       <Head>
         <title>Cities list</title>
       </Head>
-      <Datatable
-        columns={cityColumns}
+      <Datatable<RowType>
+        columns={columns}
         error={error ? new Error((error as Error).message) : null}
         loading={!data}
-        rows={rows}
+        data={data}
         pagination={{
           goToFirst: () => links.first && setApi(links.first),
           goToLast: () => links.last && setApi(links.last),

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AppLayout } from "../lib";
+import { AppLayout } from "../lib/components";
 import globe from "../lib/images/globe-drawing.png";
 import { HomeHeader, HomeBody } from "../lib/styles";
 
