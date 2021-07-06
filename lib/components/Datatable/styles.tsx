@@ -30,7 +30,6 @@ export const Table = styled.div`
     table-layout: fixed;
     border-collapse: collapse;
     position: relative;
-    border-top: 1px solid hsla(0, 0%, 94%, 1);
     & > tbody {
       height: 100%;
       width: 100%;
@@ -39,17 +38,16 @@ export const Table = styled.div`
       }
     }
     & > thead {
+      background-color:hsla(200, 15%, 80%, 1);
+      color: hsla(0, 0%, 94%, 1);
       & > tr > th {
         position: sticky;
         top: 0;
         z-index:400;
-        background-color: hsla(0, 0%, 94%, 1);
-        box-shadow: 0px 1px 1px hsla(0, 0%, 87%, 1);
       }
       & > tr {
         height: 50px;
         line-height: 50px;
-        color: hsla(0, 0%, 34%, 1);
       }
       @media only screen and (max-width: 730px) {
         display: none;
@@ -57,8 +55,6 @@ export const Table = styled.div`
     }
     & > tbody > tr {
       & > td {
-        overflow: hidden;
-        white-space: nowrap;
         &[role="article"] {
           background-color: hsla(200, 15%, 80%, 1);
           padding: 1rem;

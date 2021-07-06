@@ -42,7 +42,7 @@ export const CountryDetails: FC<CountryDetailsProps> = ({ data }) => {
         <Flag className="flag">
           <div>
             <Image
-              alt="Ethiopia Flag"
+              alt={`${data?.name} Flag`}
               src={`${data?.flagImageUri}`}
               width={2}
               height={1}

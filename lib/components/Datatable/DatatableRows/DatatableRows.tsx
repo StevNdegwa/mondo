@@ -36,9 +36,13 @@ export function DatatableRows<RowType>({
 
             row = table.current.insertRow(index);
             row.setAttribute("data-row-index", `${index}`);
-            
+
+            let colSpan = window.matchMedia("(max-width: 730px)").matches
+              ? 1
+              : columns.length;
+
             ReactDOM.render(
-              <td colSpan={columns.length} role="article">
+              <td colSpan={colSpan} role="article">
                 <TableRowDetails close={() => table.current?.deleteRow(index)}>
                   {details}
                 </TableRowDetails>

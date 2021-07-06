@@ -10,17 +10,7 @@ export default function Home() {
         <Image src={globe} width="65px" height="80px" alt="Globe" />
       </HomeHeader>
       <HomeBody>
-        <div>
-          <div>
-            Hi. With this application, you can learn something about your home,
-            Earth.
-          </div>
-          <article>
-            <h3>Quick facts</h3>
-            <div>Total countries - 199</div>
-            <div>Totao cities - 23, 845</div>
-          </article>
-        </div>
+        <div></div>
       </HomeBody>
     </AppLayout>
   );
