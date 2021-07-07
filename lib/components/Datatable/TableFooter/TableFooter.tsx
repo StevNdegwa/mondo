@@ -33,8 +33,8 @@ export const TableFooter: FC<TableFooterProps> = ({
   return (
     <TableFootWrapper>
       <div>
-        {startRow ?
-          `Showing rows from ${startRow} to ${endRow} of ${totalRows} rows` : "Showing 0 rows"}{" "}
+        {totalRows ?
+          `Showing rows from ${startRow} to ${endRow} of ${totalRows} rows` : "-"}{" "}
       </div>
       <div>
         <button onClick={goToFirst} disabled={startRow === 1}>

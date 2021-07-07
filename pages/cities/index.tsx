@@ -9,17 +9,16 @@ const Cities: FC<{}> = () => {
   const [api, setApi] = useState<string>("/v1/geo/cities?limit=10&offset=1");
   const selectedCity = useRef<string>("");
 
-  const { data, error } = useQuery(["geo/cities", api], () =>
-    fetch(`http://geodb-free-service.wirefreethought.com${api}`, {
+  const { data, error } = useQuery(["/v1/geo/cities", api], () =>
+    fetch(`/api/cities?api=${api}`, {
       method: "GET",
     }).then((response) => response.json())
   );
 
-  const [loadCityDetails] = useLazyQuery(["/v1/geo/cities"], () =>
-    fetch(
-      `http://geodb-free-service.wirefreethought.com/v1/geo/cities/${selectedCity.current}`,
-      { method: "GET" }
-    ).then((response) => response.json())
+  const [loadCityDetails] = useLazyQuery(["/v1/geo/cities/id"], () =>
+    fetch(`/api/cities/details?cityId=${selectedCity.current}`, {
+      method: "GET",
+    }).then((response) => response.json())
   );
 
   const links = useMemo(() => {
@@ -36,45 +35,56 @@ const Cities: FC<{}> = () => {
   }, [data]);
 
   const metaData = useMemo(() => {
-    return data
-      ? {
-          startRow: data.metadata.currentOffset,
-          endRow: data.metadata.currentOffset + 10,
-          totalRows: data.metadata.totalCount,
-        }
-      : {};
+    if (data) {
+      let startRow = data.metadata.currentOffset + 1,
+        endRow = (startRow + 9) > data.metadata.totalCount ? data.metadata.totalCount : startRow + 9,
+        totalRows = data.metadata.totalCount;
+
+      return {
+        startRow,
+        endRow,
+        totalRows,
+      };
+    } else {
+      return {};
+    }
   }, [data]);
 
-  const getRowDetails = useCallback(async (data: RowType) => {
-    selectedCity.current = data.id as string;
+  const getRowDetails = useCallback(
+    async (data: RowType) => {
+      selectedCity.current = data.id as string;
 
-    return new Promise<ReactNode>(async (resolve, reject) => {
-      const { data, error, isFetching, ...args } = await loadCityDetails({
-        cancelRefetch: true,
+      return new Promise<ReactNode>(async (resolve, reject) => {
+        const { data, error, isFetching, ...args } = await loadCityDetails({
+          cancelRefetch: true,
+        });
+
+        //city: "Ajman";
+        //country: "United Arab Emirates";
+        //countryCode: "AE";
+        //id: 638;
+        //latitude: 25.399444444;
+        //longitude: 55.479722222;
+        //name: "Ajman";
+        //population: 238119;
+        //region: "Ajman Emirate";
+        //regionCode: "AJ";
+        //type: "CITY";
+        //wikiDataId: "Q530171";
+
+        if (error) {
+          reject(error);
+        }
+
+        if (data) {
+          resolve(<CityDetails data={data?.data} />);
+        }
       });
+    },
+    [loadCityDetails]
+  );
 
-      //city: "Ajman";
-      //country: "United Arab Emirates";
-      //countryCode: "AE";
-      //id: 638;
-      //latitude: 25.399444444;
-      //longitude: 55.479722222;
-      //name: "Ajman";
-      //population: 238119;
-      //region: "Ajman Emirate";
-      //regionCode: "AJ";
-      //type: "CITY";
-      //wikiDataId: "Q530171";
-
-      if (error) {
-        reject(error);
-      }
-
-      if (data) {
-        resolve(<CityDetails data={data?.data} />);
-      }
-    });
-  }, [loadCityDetails]);
+  console.log(data);
 
   return (
     <AppLayout>
