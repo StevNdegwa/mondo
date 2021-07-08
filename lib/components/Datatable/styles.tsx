@@ -41,6 +41,7 @@ export const Table = styled.div`
       background-color:hsla(200, 15%, 80%, 1);
       color: hsla(0, 0%, 94%, 1);
       & > tr > th {
+        background-color:hsla(200, 15%, 80%, 1);
         position: sticky;
         top: 0;
         z-index:400;

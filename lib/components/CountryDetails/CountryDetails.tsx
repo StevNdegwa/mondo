@@ -43,7 +43,7 @@ export const CountryDetails: FC<CountryDetailsProps> = ({ data }) => {
           <div>
             <Image
               alt={`${data?.name} Flag`}
-              src={`${data?.flagImageUri}`}
+              src={`${data?.flagImageUri.replace("http", "https")}`}
               width={2}
               height={1}
               placeholder="blur"
