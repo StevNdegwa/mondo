@@ -67,7 +67,8 @@ justify-content:center;
 align-items:center;
 border-radius:8px;
 box-shadow: 0px 0px 2px hsl(210, 29%, 69%);
-font-weight:600;
+font-weight:500;
+color:hsl(210, 29%, 49%);
 @media only screen and (max-width:1024px){
     border-radius:0;
 }

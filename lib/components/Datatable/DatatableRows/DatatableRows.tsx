@@ -1,4 +1,5 @@
 import { ReactNode, useRef, MutableRefObject, useCallback } from "react";
+import { FaFolderPlus } from "react-icons/fa";
 import ReactDOM from "react-dom";
 import { TableRow } from "./styled";
 import { DataTableColumn, DatatableRowsType } from "../../../component-types";
@@ -38,8 +39,8 @@ export function DatatableRows<RowType>({
             row.setAttribute("data-row-index", `${index}`);
 
             let colSpan = window.matchMedia("(max-width: 730px)").matches
-              ? 1
-              : columns.length;
+              ? 2
+              : columns.length + 1;
 
             ReactDOM.render(
               <td colSpan={colSpan} role="article">
@@ -84,6 +85,9 @@ export function DatatableRows<RowType>({
                   </td>
                 );
               })}
+              <td>
+                <FaFolderPlus />
+              </td>
             </TableRow>
           );
         }

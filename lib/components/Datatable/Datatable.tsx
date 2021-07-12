@@ -77,6 +77,7 @@ export function Datatable<RowsType>({
               {columns.map((column: DataTableColumn<RowsType>) => {
                 return <th key={column.title}>{column.title}</th>;
               })}
+              <th style={{width:"40px"}}/>
             </tr>
           </thead>
           <tbody>
